@@ -1,36 +1,38 @@
 let audio = new Audio();
-let curTrack = null;
 let isPlaying = false;
+
 const LISTEN_BUTTON = document.getElementById("listenButton");
 
-function listenButtonClick()
-{
-    if (isPlaying)
-    {
+function listenButtonClick() {
+    if (isPlaying) {
         audio.pause();
-        audio = new Audio();
+        audio.currentTime = 0;
         isPlaying = false;
+
         document.getElementById("listenInfo").innerText = "nothing";
         document.getElementById("listenInfo").style.color = "black";
-    }
-    else
-    {
+    } else {
         playRandom();
-        isPlaying = true;
     }
 }
 
-async function playRandom()
-{
-  fetch("tracks.json")
-  .then(r => r.json())
-  .then(tracks => {
+async function playRandom() {
+    const res = await fetch("tracks.json");
+    const tracks = await res.json();
+
     const file = tracks[Math.floor(Math.random() * tracks.length)];
-    const audio = new Audio(file);
+
+    audio.pause(); // stop previous if any
+    audio = new Audio(file);
+
     audio.loop = true;
-    audio.play();
-  });
-    
+
+    await audio.play();
+
+    isPlaying = true;
+
+    document.getElementById("listenInfo").innerText = file;
+    document.getElementById("listenInfo").style.color = "green";
 }
 
 LISTEN_BUTTON.addEventListener("click", listenButtonClick);
