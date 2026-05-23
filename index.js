@@ -22,22 +22,14 @@ function listenButtonClick()
 
 async function playRandom()
 {
-    const response = await fetch("/api/tracks");
-    const tracks = await response.json();
-
-    if (tracks.length === 0)
-    {
-        console.log("No audio files found");
-        return;
-    }
-    const _index = Math.floor(Math.random() * tracks.length);
-    const musicfile = tracks[_index];
-
-    document.getElementById("listenInfo").innerText = `${musicfile}`.replace(".mp3", "");
-    document.getElementById("listenInfo").style.color = "blue";
-    audio = new Audio(`audio/${musicfile}`);
+  fetch("tracks.json")
+  .then(r => r.json())
+  .then(tracks => {
+    const file = tracks[Math.floor(Math.random() * tracks.length)];
+    const audio = new Audio(file);
     audio.loop = true;
     audio.play();
+  });
     
 }
 
